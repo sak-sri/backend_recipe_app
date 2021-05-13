@@ -43,16 +43,8 @@ function App(){
   const [healthOptions,sethealthOptions]=useState(healthLabels);
   const [healthParameters,setHealthParameters]=useState([]);
   useEffect(()=>{
-    const script=document.createElement('script')
-    script.src="https://developer.edamam.com/attribution/badge.js"
-    script.async=true
-    document.body.appendChild(script)
-
     if(query!=='' || healthParameters.length)
         getRecipes()
-    return ()=>{
-      document.body.removeChild(script)
-    }
   },[query,healthParameters]
   );
   const getRecipes=async ()=>{

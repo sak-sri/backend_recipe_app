@@ -13,7 +13,7 @@ API_ID=environ.get('API_ID')
 def home():
     return 'hello world'
 
-@app.route('https://recipe---app.herokuapp.com',methods=['POST','GET'])
+@app.route('/get',methods=['POST','GET'])
 def sendList():
     payload={'q':request.json['q'],'app_id':API_ID,'app_key':API_KEY,'health':request.json['health']}
     r=requests.get(url,params=payload)

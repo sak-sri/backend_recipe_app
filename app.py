@@ -10,8 +10,6 @@ API_KEY=environ.get('API_KEY')
 API_ID=environ.get('API_ID')
 @app.route('/',methods=['POST','GET'])
 def sendList():
-    if(request.json==None):
-        return 'hello world'
     payload={'q':request.json['q'],'app_id':API_ID,'app_key':API_KEY,'health':request.json['health']}
     r=requests.get(url,params=payload)
     return r.text

@@ -9,6 +9,9 @@ url=environ.get('url')
 API_KEY=environ.get('API_KEY')
 API_ID=environ.get('API_ID')
 
+@app.route('/')
+def home():
+    return 'hello world'
 
 @app.route('https://recipe---app.herokuapp.com',methods=['POST','GET'])
 def sendList():

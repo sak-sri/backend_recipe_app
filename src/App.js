@@ -3,7 +3,6 @@ import { useEffect,useState } from 'react';
 import Recipe from './Recipe'
 import DropDown from './DropDown'
 import axios from 'axios'
-import qs from 'qs'
 import {Helmet} from 'react-helmet'
 function App(){
   let healthLabels=[
@@ -35,32 +34,37 @@ function App(){
    checked:false},
     {value:'tree-nut-free',
     checked:false}];
-  const APP_ID=process.env.REACT_APP_APP_ID;
-  const APP_KEY=process.env.REACT_APP_APP_KEY;
   const [recipes,setRecipes]=useState([]);
   const [search,setSearch]=useState('');
   const [query,setQuery]=useState('');
   const [healthOptions,sethealthOptions]=useState(healthLabels);
   const [healthParameters,setHealthParameters]=useState([]);
+  const [status,setStatus]=useState('ok')
   useEffect(()=>{
-    if(query!=='' || healthParameters.length)
+    let mounted=true;
+    if((query!=='' || healthParameters.length) && mounted)
         getRecipes()
+     mounted=false;
+     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[query,healthParameters]
   );
   const getRecipes=async ()=>{
-      let response=await axios.get(`https://api.edamam.com/search`,{params:{
-        q:query,
-        app_id:APP_ID,
-        app_key:APP_KEY,
-        health:healthParameters,
-      },
-      paramsSerializer:(params)=>{
-        return qs.stringify(params,{arrayFormat:'repeat'})
-      }
-    });
-    let hits=await response.data.hits;
+   let data=JSON.stringify({
+    q:query,
+    health:healthParameters
+   })
+   let response=await axios.post('https://recipe---app.herokuapp.com/',data,{headers:{"Content-Type" : "application/json"}}
+    )
+   let hits=await response.data.hits;
+   if(typeof hits==='undefined'){
+      setStatus('notok')
+   }
+   else{
+      setStatus('ok')
+   }
    setRecipes(hits);
-  }
+
+};
   const collectHealthOptions=(event)=>{
     healthLabels=[...healthOptions];
       healthLabels.forEach((option)=>{
@@ -108,12 +112,12 @@ function App(){
       </div>
       <div className={classes.Recipe}>
       {
-     recipes!==''?recipes.map((item,index)=>{return (<Recipe key={index} 
+     status==="ok"?recipes.map((item,index)=>{return (<Recipe key={index} 
      title={item.recipe.label} 
      url={item.recipe.image} 
      cal={item.recipe.calories}
      ingredients={item.recipe.ingredients}
-     />)}):null
+     />)}):<div style={{margin:'auto',width:'fit-content'}}>Sorry! No Results Matched Your Search</div>
           }     </div>
       <div id="edamam-badge" data-color="white" style={{marginTop:"100%"}}></div>
     </div>

@@ -1,1 +1,1 @@
-This is a React App for Searching Recipes.User has to enter the name of any Ingredient and can add filters.Different Recipes will be returned.
+This is a backend for the recipe_app.
